@@ -105,10 +105,8 @@ class MainActivity : AppCompatActivity() {
         if (mediaImage != null) {
             val image = InputImage.fromMediaImage(mediaImage, imageProxy.imageInfo.rotationDegrees)
 
-            // Use a list to hold the tasks
             val tasks = mutableListOf<com.google.android.gms.tasks.Task<*>>()
 
-            // 1. Object detection
             val objectDetectionTask = objectDetector.process(image)
                 .addOnSuccessListener { objects ->
                     Log.d("MLKit", "Detected: ${objects.size} objects")
@@ -122,7 +120,6 @@ class MainActivity : AppCompatActivity() {
                 .addOnFailureListener { it.printStackTrace() }
             tasks.add(objectDetectionTask)
 
-            // 2. Image labeling
             val imageLabelingTask = imageLabeler.process(image)
                 .addOnSuccessListener { labels ->
                     binding.overlay.setLabels(labels)
@@ -130,7 +127,6 @@ class MainActivity : AppCompatActivity() {
                 .addOnFailureListener { it.printStackTrace() }
             tasks.add(imageLabelingTask)
 
-            // Close ImageProxy only after both tasks complete
             com.google.android.gms.tasks.Tasks.whenAllComplete(tasks)
                 .addOnCompleteListener {
                     imageProxy.close()
